@@ -1,4 +1,4 @@
-import 'package:annfsu_app/view/login.view.dart';
+import 'package:annfsu_app/view/auth/login.view.dart';
 import 'package:annfsu_app/widgets/button.global.dart';
 import 'package:annfsu_app/widgets/spinner.widget.dart';
 import 'package:annfsu_app/widgets/text.form.global.dart';

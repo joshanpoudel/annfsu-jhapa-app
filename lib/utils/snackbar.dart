@@ -22,7 +22,7 @@ generateSuccessSnackbar(String title, String message) {
     ),
     backgroundColor: Colors.green,
     colorText: Colors.white,
-    snackPosition: SnackPosition.BOTTOM,
+    snackPosition: SnackPosition.TOP,
     isDismissible: true,
     borderRadius: 12,
     margin: const EdgeInsets.all(12),

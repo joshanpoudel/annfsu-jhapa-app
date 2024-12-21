@@ -1,6 +1,6 @@
 import 'package:annfsu_app/utils/global.colors.dart';
 import 'package:annfsu_app/view/home.view.dart';
-import 'package:annfsu_app/view/register.view.dart';
+import 'package:annfsu_app/view/auth/register.view.dart';
 import 'package:annfsu_app/widgets/button.global.dart';
 import 'package:annfsu_app/widgets/spinner.widget.dart';
 import 'package:annfsu_app/widgets/text.form.global.dart';

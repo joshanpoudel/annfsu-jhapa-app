@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:annfsu_app/utils/global.colors.dart';
-import 'package:annfsu_app/view/login.view.dart';
+import 'package:annfsu_app/view/auth/login.view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

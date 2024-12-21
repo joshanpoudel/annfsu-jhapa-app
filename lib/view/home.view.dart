@@ -6,7 +6,7 @@ import 'package:annfsu_app/utils/constants.dart';
 import 'package:annfsu_app/utils/dialog.dart';
 import 'package:annfsu_app/utils/global.colors.dart';
 import 'package:annfsu_app/utils/snackbar.dart';
-import 'package:annfsu_app/view/login.view.dart';
+import 'package:annfsu_app/view/auth/login.view.dart';
 import 'package:annfsu_app/view/members/members.view.dart';
 import 'package:annfsu_app/view/profile.view.dart';
 import 'package:annfsu_app/widgets/profile.widget.dart';
