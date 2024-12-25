@@ -180,6 +180,22 @@ class _UserProfileViewState extends State<UserProfileView> {
                               children: [
                                 Row(
                                   children: [
+                                    const Icon(Icons.tag, color: Colors.grey),
+                                    const SizedBox(width: 10),
+                                    Flexible(
+                                      child: Text(
+                                        _profile!.data.id
+                                            .toString()
+                                            .padLeft(4, "0"),
+                                        style: const TextStyle(fontSize: 14),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 30),
+                                Row(
+                                  children: [
                                     const Icon(Icons.person,
                                         color: Colors.grey),
                                     const SizedBox(width: 10),

@@ -7,6 +7,7 @@ class ApiConstants {
   static String registerEndpoint = 'api/auth/register/';
   static String profileEndpoint = 'api/auth/profile/';
   static String updateProfilePictureEndpoint = 'api/auth/profile-picture/';
+  static String membersEndpoint = 'api/members/';
 
   static Future<void> setBaseUrl(String url) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

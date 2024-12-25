@@ -1,38 +1,38 @@
 // To parse this JSON data, do
 //
-//     final profile = profileFromJson(jsonString);
+//     final members = membersFromJson(jsonString);
 
 import 'dart:convert';
 
-Profile profileFromJson(String str) => Profile.fromJson(json.decode(str));
+Members membersFromJson(String str) => Members.fromJson(json.decode(str));
 
-String profileToJson(Profile data) => json.encode(data.toJson());
+String membersToJson(Members data) => json.encode(data.toJson());
 
-class Profile {
+class Members {
   bool success;
-  Data data;
+  List<Datum> data;
   String message;
 
-  Profile({
+  Members({
     required this.success,
     required this.data,
     required this.message,
   });
 
-  factory Profile.fromJson(Map<String, dynamic> json) => Profile(
+  factory Members.fromJson(Map<String, dynamic> json) => Members(
         success: json["success"],
-        data: Data.fromJson(json["data"]),
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
         message: json["message"],
       );
 
   Map<String, dynamic> toJson() => {
         "success": success,
-        "data": data.toJson(),
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
         "message": message,
       };
 }
 
-class Data {
+class Datum {
   int id;
   String email;
   String fullName;
@@ -42,9 +42,9 @@ class Data {
   String address;
   String collegeName;
   String position;
-  dynamic profilePicture;
+  String? profilePicture;
 
-  Data({
+  Datum({
     required this.id,
     required this.email,
     required this.fullName,
@@ -57,7 +57,7 @@ class Data {
     required this.profilePicture,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         id: json["id"],
         email: json["email"],
         fullName: json["full_name"],

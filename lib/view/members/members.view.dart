@@ -1,5 +1,11 @@
+import 'package:annfsu_app/models/members.model.dart';
+import 'package:annfsu_app/services/members.service.dart';
+import 'package:annfsu_app/utils/constants.dart';
+import 'package:annfsu_app/view/auth/login.view.dart';
 import 'package:annfsu_app/view/home.view.dart';
 import 'package:annfsu_app/view/members/memberProfile.view.dart';
+import 'package:annfsu_app/widgets/spinner.widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:annfsu_app/utils/global.colors.dart';
@@ -12,32 +18,37 @@ class MembersView extends StatefulWidget {
 }
 
 class _MembersViewState extends State<MembersView> {
-  final List<Map<String, String>> members = [
-    {
-      "name": "John Doe",
-      "position": "President",
-      "phoneNumber": "+977-9801111111",
-      "location": "Kathmandu, Nepal",
-      "bloodGroup": "O+",
-      "organization": "Tribhuvan University",
-    },
-    {
-      "name": "Jane Smith",
-      "position": "Secretary",
-      "phoneNumber": "+977-9802222222",
-      "location": "Lalitpur, Nepal",
-      "bloodGroup": "A+",
-      "organization": "Kathmandu University",
-    },
-    {
-      "name": "Michael Johnson",
-      "position": "Treasurer",
-      "phoneNumber": "+977-9803333333",
-      "location": "Pokhara, Nepal",
-      "bloodGroup": "B+",
-      "organization": "Pokhara University",
-    },
-  ];
+  Members? members;
+  bool isRefreshing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMembers();
+  }
+
+  Future<void> _fetchMembers() async {
+    final membersData = await MembersAPIService().getMembers();
+    if (membersData is Members) {
+      setState(() {
+        members = membersData;
+      });
+    } else {
+      Get.off(() => const LoginView());
+    }
+  }
+
+  Future<void> _refreshMembers() async {
+    setState(() {
+      isRefreshing = true;
+    });
+
+    await _fetchMembers();
+
+    setState(() {
+      isRefreshing = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,37 +68,57 @@ class _MembersViewState extends State<MembersView> {
         backgroundColor: GlobalColors.mainColor,
         foregroundColor: Colors.white,
       ),
-      body: ListView.builder(
-        itemCount: members.length,
-        itemBuilder: (context, index) {
-          final member = members[index];
-          return Card(
-            elevation: 5,
-            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage:
-                    AssetImage("images/logo.png"), // Placeholder image
-                radius: 25,
+      body: RefreshIndicator(
+        onRefresh: _refreshMembers,
+        child: members != null
+            ? ListView.builder(
+                itemCount: members!.data.length,
+                itemBuilder: (context, index) {
+                  final member = members!.data[index];
+                  return Card(
+                    elevation: 5,
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 16),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: CachedNetworkImageProvider(
+                          member.profilePicture != null &&
+                                  member.profilePicture!.isNotEmpty
+                              ? "${ApiConstants.baseUrl}${member.profilePicture}"
+                              : "https://via.placeholder.com/150", // Placeholder URL
+                        ), // Placeholder image
+                        radius: 25,
+                      ),
+                      title: Text(
+                        member.fullName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(member.position),
+                      onTap: () {
+                        Get.to(() => MemberProfileView(
+                              id: member.id,
+                              name: member.fullName,
+                              position: member.position,
+                              phoneNumber: member.contactNumber,
+                              location: member.address,
+                              bloodGroup: member.bloodGroup,
+                              organization: member.collegeName,
+                              profilePicture: member.profilePicture,
+                            ));
+                      },
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: isRefreshing
+                    ? ModernSpinner(
+                        color: GlobalColors.mainColor,
+                      )
+                    : ModernSpinner(
+                        color: GlobalColors.mainColor,
+                      ),
               ),
-              title: Text(
-                member['name']!,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(member['position']!),
-              onTap: () {
-                Get.to(() => MemberProfileView(
-                      name: member['name']!,
-                      position: member['position']!,
-                      phoneNumber: member['phoneNumber']!,
-                      location: member['location']!,
-                      bloodGroup: member['bloodGroup']!,
-                      organization: member['organization']!,
-                    ));
-              },
-            ),
-          );
-        },
       ),
     );
   }

@@ -166,7 +166,7 @@ class _LoginViewState extends State<LoginView> {
                           Get.to(() => const RegisterView());
                         },
                         child: Text(
-                          " Signup",
+                          " Register",
                           style: TextStyle(
                               color: GlobalColors.mainColor,
                               fontWeight: FontWeight.bold),
