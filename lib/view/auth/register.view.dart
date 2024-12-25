@@ -1,4 +1,4 @@
-import 'package:annfsu_app/models/auth/auth.models.dart';
+import 'package:annfsu_app/models/auth/auth.model.dart';
 import 'package:annfsu_app/models/error.model.dart';
 import 'package:annfsu_app/services/auth.service.dart';
 import 'package:annfsu_app/utils/snackbar.dart';

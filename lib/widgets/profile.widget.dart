@@ -1,4 +1,6 @@
+import 'package:annfsu_app/utils/constants.dart';
 import 'package:annfsu_app/utils/global.colors.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ProfileWidget extends StatefulWidget {
@@ -29,8 +31,9 @@ class ProfileWidgetState extends State<ProfileWidget> {
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(40),
-                    topLeft: Radius.circular(40)),
+                  bottomRight: Radius.circular(40),
+                  topLeft: Radius.circular(40),
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 40.0),
@@ -46,21 +49,36 @@ class ProfileWidgetState extends State<ProfileWidget> {
                             .titleLarge
                             ?.copyWith(color: GlobalColors.mainColor),
                       ),
-                      const SizedBox(height: 8.0), // Add space here
+                      const SizedBox(height: 8.0),
                       Text(
                         "Welcome to ANNFSU Jhapa",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(
-                                color: GlobalColors.mainColor, fontSize: 14.0),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: GlobalColors.mainColor,
+                                  fontSize: 14.0,
+                                ),
                       ),
                     ],
                   ),
                   trailing: CircleAvatar(
                     radius: 40.0,
                     backgroundColor: Colors.grey[200],
-                    backgroundImage: const AssetImage("images/logo.png"),
+                    backgroundImage: CachedNetworkImageProvider(
+                      widget.profilePicture != null &&
+                              widget.profilePicture!.isNotEmpty
+                          ? "${ApiConstants.baseUrl}${widget.profilePicture}"
+                          : "https://via.placeholder.com/150", // Placeholder URL
+                    ),
+                    child: ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: widget.profilePicture != null &&
+                                widget.profilePicture!.isNotEmpty
+                            ? "${ApiConstants.baseUrl}${widget.profilePicture}"
+                            : "https://via.placeholder.com/150", // Placeholder URL
+                        fit: BoxFit
+                            .cover, // This ensures proper scaling of the image
+                      ),
+                    ),
                   ),
                 ),
               ),

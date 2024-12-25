@@ -2,6 +2,8 @@
 
 import 'dart:async';
 
+import 'package:annfsu_app/models/auth/profile.model.dart';
+import 'package:annfsu_app/services/auth.service.dart';
 import 'package:annfsu_app/utils/constants.dart';
 import 'package:annfsu_app/utils/dialog.dart';
 import 'package:annfsu_app/utils/global.colors.dart';
@@ -10,6 +12,7 @@ import 'package:annfsu_app/view/auth/login.view.dart';
 import 'package:annfsu_app/view/members/members.view.dart';
 import 'package:annfsu_app/view/profile.view.dart';
 import 'package:annfsu_app/widgets/profile.widget.dart';
+import 'package:annfsu_app/widgets/spinner.widget.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,24 +26,25 @@ class HomeView extends StatefulWidget {
 }
 
 class HomeViewState extends State<HomeView> {
+  Profile? _profile;
   final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
   @override
   void initState() {
     super.initState();
-    // Timer(const Duration(seconds: 1), fetchProfile);
+    Timer(const Duration(seconds: 1), fetchProfile);
   }
 
-  // Future<void> fetchProfile() async {
-  //   final profile = await ProfileAPIService().getProfile();
-  //   if (profile is Profile) {
-  //     setState(() {
-  //       _profile = profile;
-  //     });
-  //   } else {
-  //     Get.off(() => const ProfileCreateView());
-  //   }
-  // }
+  Future<void> fetchProfile() async {
+    final profile = await AuthAPIService().getProfile();
+    if (profile is Profile) {
+      setState(() {
+        _profile = profile;
+      });
+    } else {
+      Get.off(() => const LoginView());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,51 +84,60 @@ class HomeViewState extends State<HomeView> {
       ),
       body: WillPopScope(
           onWillPop: () => _onBackButtonPressed(context),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 10.0,
-              horizontal: 10.0,
-            ),
-            height: MediaQuery.of(context).size.height,
-            color: Colors.grey.shade300,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  height: 140,
-                  color: Colors.transparent,
-                  child: const ProfileWidget(
-                    firstName: "Joshan Poudel",
+          child: _profile != null
+              ? Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10.0,
+                    horizontal: 10.0,
                   ),
-                ),
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  height: MediaQuery.of(context).size.height,
+                  color: Colors.grey.shade300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      getExpanded("profile", "Profile", "View Profile", () {
-                        Get.to(() => const UserProfileView());
-                      }),
-                      getExpanded("members", "Members", "View Members", () {
-                        Get.to(() => const MembersView());
-                      }),
+                      Container(
+                        height: 140,
+                        color: Colors.transparent,
+                        child: ProfileWidget(
+                          firstName: _profile!.data.fullName,
+                          profilePicture: _profile!.data.profilePicture,
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            getExpanded("profile", "Profile", "View Profile",
+                                () {
+                              Get.to(() => const UserProfileView());
+                            }),
+                            getExpanded("members", "Members", "View Members",
+                                () {
+                              Get.to(() => const MembersView());
+                            }),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            getExpanded(
+                                "blood", "Blood Donors", "View Blood Donors",
+                                () {
+                              // Get.to(() => const UserProfileView());
+                            }),
+                            getExpanded("about", "About Us", "Our Info", () {})
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      getExpanded("blood", "Blood Donors", "View Blood Donors",
-                          () {
-                        // Get.to(() => const UserProfileView());
-                      }),
-                      getExpanded("about", "About Us", "Our Info", () {})
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          )),
+                )
+              : Center(
+                  child: ModernSpinner(
+                  color: GlobalColors.mainColor,
+                ))),
     );
   }
 

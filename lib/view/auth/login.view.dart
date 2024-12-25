@@ -1,4 +1,4 @@
-import 'package:annfsu_app/models/auth/auth.models.dart';
+import 'package:annfsu_app/models/auth/auth.model.dart';
 import 'package:annfsu_app/models/error.model.dart';
 import 'package:annfsu_app/services/auth.service.dart';
 import 'package:annfsu_app/utils/global.colors.dart';
@@ -27,6 +27,20 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAccessToken();
+  }
+
+  Future<void> _checkAccessToken() async {
+    final SharedPreferences pref = await prefs;
+    final String? accessToken = pref.getString("accessToken");
+    if (accessToken != null && accessToken.isNotEmpty) {
+      Get.off(() => const HomeView());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,12 +154,6 @@ class _LoginViewState extends State<LoginView> {
                               },
                             ),
                             const SizedBox(height: 10),
-                            // TextButton(
-                            //   onPressed: () {
-                            //     // Get.to(() => const SetBaseUrlView());
-                            //   },
-                            //   child: const Text("Set Base URL"),
-                            // ),
                           ],
                         ),
                       ),
