@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:annfsu_app/models/auth/profile.model.dart';
+import 'package:annfsu_app/services/auth.service.dart';
 import 'package:annfsu_app/utils/global.colors.dart';
 import 'package:annfsu_app/view/auth/login.view.dart';
+import 'package:annfsu_app/view/home.view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,17 +37,13 @@ class _SplashViewState extends State<SplashView>
     super.dispose();
   }
 
-  // Future<dynamic> checkAccessToken() async {
-  //   var data = await ProfileAPIService().getProfile();
-  //   if (data is Profile) {
-  //     Get.off(() => const HomeView());
-  //   } else {
-  //     Get.off(() => const LoginView());
-  //   }
-  // }
-
   Future<dynamic> checkAccessToken() async {
-    Get.off(() => const LoginView());
+    var data = await AuthAPIService().getProfile();
+    if (data is Profile) {
+      Get.off(() => const HomeView());
+    } else {
+      Get.off(() => const LoginView());
+    }
   }
 
   @override

@@ -60,7 +60,9 @@ class HomeViewState extends State<HomeView> {
             onPressed: () async {
               SharedPreferences pref = await prefs;
 
-              showConfirmationDialog("Are you sure you want to logout?", () {
+              // ignore: use_build_context_synchronously
+              showConfirmationDialog(
+                  context, "Are you sure you want to logout?", () {
                 pref.remove("accessToken");
                 Get.offAll(() => const LoginView());
                 generateSuccessSnackbar("Success", "Logged out successfully!");
@@ -141,34 +143,55 @@ class HomeViewState extends State<HomeView> {
     );
   }
 
-  _onBackButtonPressed(BuildContext context) async {
-    bool exitApp = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Confirmation"),
-            content: const Text("Do you want to close the app?"),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: const Text(
-                    "No",
-                    style: TextStyle(color: Colors.red),
-                  )),
-              TextButton(
-                onPressed: () {
-                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-                },
-                child: const Text(
-                  "Yes",
-                ),
+  Future<bool> _onBackButtonPressed(BuildContext context) async {
+    return (await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text(
+                "Confirmation",
+                style: TextStyle(fontSize: 14),
+                textAlign: TextAlign.center,
               ),
-            ],
-          );
-        });
-
-    return exitApp;
+              content: const Text(
+                "Do you want to close the app?",
+                style: TextStyle(fontSize: 12),
+                textAlign: TextAlign.center,
+              ),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text(
+                        "No",
+                        style: TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(GlobalColors.mainColor),
+                      ),
+                      onPressed: () {
+                        SystemChannels.platform
+                            .invokeMethod('SystemNavigator.pop');
+                      },
+                      child: const Text(
+                        "Yes",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        )) ??
+        false;
   }
 }

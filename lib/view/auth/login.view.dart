@@ -31,15 +31,6 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    _checkAccessToken();
-  }
-
-  Future<void> _checkAccessToken() async {
-    final SharedPreferences pref = await prefs;
-    final String? accessToken = pref.getString("accessToken");
-    if (accessToken != null && accessToken.isNotEmpty) {
-      Get.off(() => const HomeView());
-    }
   }
 
   @override

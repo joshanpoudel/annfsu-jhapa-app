@@ -64,21 +64,11 @@ class ProfileWidgetState extends State<ProfileWidget> {
                     radius: 40.0,
                     backgroundColor: Colors.grey[200],
                     backgroundImage: CachedNetworkImageProvider(
-                      widget.profilePicture != null &&
-                              widget.profilePicture!.isNotEmpty
-                          ? "${ApiConstants.baseUrl}${widget.profilePicture}"
-                          : "https://via.placeholder.com/150", // Placeholder URL
-                    ),
-                    child: ClipOval(
-                      child: CachedNetworkImage(
-                        imageUrl: widget.profilePicture != null &&
+                        widget.profilePicture != null &&
                                 widget.profilePicture!.isNotEmpty
                             ? "${ApiConstants.baseUrl}${widget.profilePicture}"
-                            : "https://via.placeholder.com/150", // Placeholder URL
-                        fit: BoxFit
-                            .cover, // This ensures proper scaling of the image
-                      ),
-                    ),
+                            : "https://via.placeholder.com/150",
+                        scale: 1.0),
                   ),
                 ),
               ),
