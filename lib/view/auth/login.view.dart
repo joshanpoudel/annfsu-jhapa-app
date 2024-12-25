@@ -1,4 +1,8 @@
+import 'package:annfsu_app/models/auth/auth.models.dart';
+import 'package:annfsu_app/models/error.model.dart';
+import 'package:annfsu_app/services/auth.service.dart';
 import 'package:annfsu_app/utils/global.colors.dart';
+import 'package:annfsu_app/utils/snackbar.dart';
 import 'package:annfsu_app/view/home.view.dart';
 import 'package:annfsu_app/view/auth/register.view.dart';
 import 'package:annfsu_app/widgets/button.global.dart';
@@ -16,9 +20,11 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  late final Errors errors;
+  late final Authentication model;
   bool isLoading = false;
 
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
@@ -73,11 +79,11 @@ class _LoginViewState extends State<LoginView> {
                               height: 20,
                             ),
                             TextFormGlobal(
-                              controller: usernameController,
+                              controller: emailController,
                               obscure: false,
-                              labelText: "Username",
-                              text: "Username",
-                              textInputType: TextInputType.text,
+                              labelText: "Email",
+                              text: "Email",
+                              textInputType: TextInputType.emailAddress,
                             ),
                             const SizedBox(
                               height: 20,
@@ -95,7 +101,42 @@ class _LoginViewState extends State<LoginView> {
                             ButtonGlobal(
                               text: "Login",
                               onTap: () async {
-                                Get.off(() => const HomeView());
+                                setState(() {
+                                  isLoading = true;
+                                });
+
+                                try {
+                                  dynamic result = await AuthAPIService().login(
+                                      emailController.text,
+                                      passwordController.text);
+                                  if (result is Authentication) {
+                                    model = result;
+                                    if (model.success) {
+                                      SharedPreferences pref = await prefs;
+                                      await pref.setString("accessToken",
+                                          model.data.accessToken);
+                                      await pref.setString("refreshToken",
+                                          model.data.refreshToken);
+                                      Get.off(() => const HomeView());
+                                      generateSuccessSnackbar(
+                                          "Success", model.message);
+                                    }
+                                  } else if (result is Errors) {
+                                    errors = result;
+                                    generateErrorSnackbar(
+                                        "Error", errors.message);
+                                    passwordController.text = "";
+                                  } else {
+                                    generateErrorSnackbar(
+                                        "Error", "Something went wrong!");
+                                  }
+                                } catch (e) {
+                                  generateErrorSnackbar("Error", e.toString());
+                                } finally {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
                               },
                             ),
                             const SizedBox(height: 10),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiConstants {
-  static String baseUrl = 'http://192.168.1.230:8000/';
+  static String baseUrl = 'http://192.168.254.18:8000/';
   static String loginEndpoint = 'api/auth/login/';
   static String registerEndpoint = 'api/auth/register/';
 

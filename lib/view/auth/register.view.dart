@@ -1,3 +1,7 @@
+import 'package:annfsu_app/models/auth/auth.models.dart';
+import 'package:annfsu_app/models/error.model.dart';
+import 'package:annfsu_app/services/auth.service.dart';
+import 'package:annfsu_app/utils/snackbar.dart';
 import 'package:annfsu_app/view/auth/login.view.dart';
 import 'package:annfsu_app/widgets/button.global.dart';
 import 'package:annfsu_app/widgets/spinner.widget.dart';
@@ -24,6 +28,8 @@ class _RegisterViewState extends State<RegisterView> {
   final TextEditingController positionController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
 
+  late final Authentication model;
+  late final Errors errors;
   bool isLoading = false;
 
   @override
@@ -167,7 +173,49 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const SizedBox(height: 30),
-                        ButtonGlobal(text: "Register", onTap: () async {}),
+                        ButtonGlobal(
+                            text: "Register",
+                            onTap: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+
+                              try {
+                                dynamic result = await AuthAPIService()
+                                    .register(
+                                        emailController.text,
+                                        passwordController.text,
+                                        fullNameController.text,
+                                        genderController.text.toLowerCase(),
+                                        bloodGroupController.text,
+                                        contactNumberController.text,
+                                        addressController.text,
+                                        collegeController.text,
+                                        positionController.text);
+
+                                if (result is Authentication) {
+                                  model = result;
+                                  if (model.success) {
+                                    Get.off(() => const LoginView());
+                                    generateSuccessSnackbar(
+                                        "Success", model.message);
+                                  }
+                                } else if (result is Errors) {
+                                  errors = result;
+                                  generateErrorSnackbar(
+                                      "Error", errors.message);
+                                } else {
+                                  generateErrorSnackbar(
+                                      "Error", "Something went wrong!");
+                                }
+                              } catch (e) {
+                                generateErrorSnackbar("Error", e.toString());
+                              } finally {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
+                            }),
                       ],
                     ),
                   ),
